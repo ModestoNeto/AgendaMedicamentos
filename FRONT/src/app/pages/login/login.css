@@ -1,10 +1,10 @@
 .login-container {
   display: flex;
-  justify-content: center;
+  justify-content: right;
+  padding-right: 250px;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 1rem;
+  background: linear-gradient(135deg, #849aff 0%, #522f74 100%);
 }
 
 .login-card {

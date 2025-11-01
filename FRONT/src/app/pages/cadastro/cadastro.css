@@ -1,10 +1,10 @@
 .cadastro-container {
   display: flex;
-  justify-content: center;
+  justify-content: right;
+  padding-right: 250px;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  padding: 1rem;
+  background: linear-gradient(135deg, #a767af 0%, #84091a 100%);
 }
 
 .cadastro-card {
