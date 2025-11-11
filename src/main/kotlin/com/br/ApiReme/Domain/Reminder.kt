@@ -1,0 +1,28 @@
+import jakarta.persistence.*
+import java.time.LocalDateTime
+
+@Entity
+@Table(name = "reminders")
+data class Reminder(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "medication_id", nullable = false)
+    val medication: Medication,
+
+    @Column(nullable = false)
+    val datetime: LocalDateTime,
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    var status: ReminderStatus = ReminderStatus.PENDING,
+
+    @OneToMany(mappedBy = "reminder", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val notifications: MutableList<Notification> = mutableListOf()
+)
+
+enum class ReminderStatus {
+    PENDING, DONE, MISSED
+}
