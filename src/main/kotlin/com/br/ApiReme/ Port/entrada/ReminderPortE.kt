@@ -1,6 +1,7 @@
 package com.br.ApiReme.` Port`.entrada
 
-import Reminder
+import com.br.ApiReme.domain.Reminder
+
 
 interface ReminderPortE {
         fun createReminder(reminder: Reminder): Reminder

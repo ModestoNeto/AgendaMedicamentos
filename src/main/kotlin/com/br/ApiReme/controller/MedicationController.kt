@@ -1,9 +1,9 @@
-package com.br.ApiReme.Controller
+package com.br.ApiReme.controller
 
 
 
-import Medication
 import com.br.ApiReme.` Port`.entrada.MedicationPortE
+import com.br.ApiReme.domain.Medication
 import org.springframework.web.bind.annotation.*
 
 @RestController

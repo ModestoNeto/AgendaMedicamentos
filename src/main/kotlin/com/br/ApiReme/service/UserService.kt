@@ -1,6 +1,6 @@
 package com.br.ApiReme.service
 
-import UserDomain
+import com.br.ApiReme.domain.UserDomain
 import com.br.ApiReme.` Port`.saida.UserPortS
 import com.br.ApiReme.` Port`.entrada.UserPortE
 import org.springframework.stereotype.Service

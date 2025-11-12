@@ -1,6 +1,6 @@
 
 package com.br.ApiReme.` Port`.entrada
-import Medication
+import com.br.ApiReme.domain.Medication
 
 
 interface MedicationPortE {

@@ -1,3 +1,6 @@
+
+package com.br.ApiReme.domain
+import com.br.ApiReme.domain.Medication
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -11,6 +14,11 @@ data class Reminder(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medication_id", nullable = false)
     val medication: Medication,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    val user: UserDomain,
+
 
     @Column(nullable = false)
     val datetime: LocalDateTime,

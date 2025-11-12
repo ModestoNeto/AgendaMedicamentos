@@ -1,5 +1,7 @@
 package com.br.ApiReme.` Port`.saida
-import Notification
+
+import com.br.ApiReme.domain.Notification
+
 interface NotificationPortS {
     fun save(notification: Notification): Notification
     fun findById(id: Long): Notification?

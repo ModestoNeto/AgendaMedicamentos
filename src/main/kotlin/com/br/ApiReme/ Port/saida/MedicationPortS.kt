@@ -1,5 +1,5 @@
 package com.br.ApiReme.` Port`.saida
-import Medication
+import com.br.ApiReme.domain.Medication
 
 interface MedicationPortS {
     fun save(medication: Medication): Medication

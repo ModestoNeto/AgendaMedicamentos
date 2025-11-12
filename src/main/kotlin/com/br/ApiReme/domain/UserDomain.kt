@@ -1,3 +1,5 @@
+
+package com.br.ApiReme.domain
 import jakarta.persistence.*
 
 @Entity
@@ -16,6 +18,10 @@ data class UserDomain(
     @Column(name = "password_hash", nullable = false)
     val passwordHash: String,
 
+
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val medications: MutableList<Medication> = mutableListOf()
+    val medications: MutableList<Medication> = mutableListOf(),
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val reminders: MutableList<Reminder> = mutableListOf()
 )

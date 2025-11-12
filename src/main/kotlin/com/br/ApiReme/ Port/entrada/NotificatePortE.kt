@@ -1,6 +1,7 @@
 package com.br.ApiReme.` Port`.entrada
 
-import Notification
+import com.br.ApiReme.domain.Notification
+
 
 interface NotificatePortE {
 

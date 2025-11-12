@@ -1,9 +1,10 @@
-package com.br.ApiReme.Controller
+package com.br.ApiReme.controller
 
 
 
-import Notification
+
 import com.br.ApiReme.` Port`.entrada.NotificatePortE
+import com.br.ApiReme.domain.Notification
 import org.springframework.web.bind.annotation.*
 
 @RestController

@@ -1,8 +1,9 @@
-package com.br.ApiReme.Service
+package com.br.ApiReme.service
 
-import Reminder
+
 import com.br.ApiReme.` Port`.entrada.ReminderPortE
 import com.br.ApiReme.` Port`.saida.ReminderPortS
+import com.br.ApiReme.domain.Reminder
 
 import org.springframework.stereotype.Service
 

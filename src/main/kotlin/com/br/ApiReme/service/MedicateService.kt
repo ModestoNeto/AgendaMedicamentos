@@ -1,8 +1,9 @@
-package com.br.ApiReme.Service
+package com.br.ApiReme.service
 
-import Medication
+
 import com.br.ApiReme.` Port`.saida.MedicationPortS
 import com.br.ApiReme.` Port`.entrada.MedicationPortE
+import com.br.ApiReme.domain.Medication
 import org.springframework.stereotype.Service
 
 @Service

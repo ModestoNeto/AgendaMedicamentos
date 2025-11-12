@@ -1,3 +1,4 @@
+package com.br.ApiReme.domain
 import jakarta.persistence.*
 
 @Entity
@@ -8,8 +9,8 @@ data class Medication(
     val id: Long = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: UserDomain,
+    @JoinColumn(name = "user_id", nullable = true)
+    val user: UserDomain? = null,
 
     @Column(nullable = false)
     val name: String,
@@ -20,6 +21,11 @@ data class Medication(
     @Column(nullable = false)
     val frequency: String,
 
-    @OneToMany(mappedBy = "medication", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "medication",
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
+    )
     val reminders: MutableList<Reminder> = mutableListOf()
 )

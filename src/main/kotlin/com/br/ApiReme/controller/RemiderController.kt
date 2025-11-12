@@ -1,8 +1,8 @@
-package com.br.ApiReme.Controller
+package com.br.ApiReme.controller
 
 
 import com.br.ApiReme.` Port`.entrada.ReminderPortE
-import Reminder
+import com.br.ApiReme.domain.Reminder
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,14 +13,14 @@ class ReminderController(
     private val reminderService: ReminderPortE
 ) {
 
-    // ✅ Criar novo lembrete
+
     @PostMapping
     fun createReminder(@RequestBody reminder: Reminder): ResponseEntity<Reminder> {
         val created = reminderService.createReminder(reminder)
         return ResponseEntity.status(HttpStatus.CREATED).body(created)
     }
 
-    // ✅ Buscar lembrete por ID
+
     @GetMapping("/{id}")
     fun getReminderById(@PathVariable id: Long): ResponseEntity<Reminder> {
         val reminder = reminderService.findReminderById(id)
@@ -30,21 +30,20 @@ class ReminderController(
             ResponseEntity.notFound().build()
     }
 
-    // ✅ Buscar todos os lembretes
+
     @GetMapping
     fun getAllReminders(): ResponseEntity<List<Reminder>> {
         val reminders = reminderService.findAllReminders()
         return ResponseEntity.ok(reminders)
     }
 
-    // ✅ Buscar lembretes por medicação
+
     @GetMapping("/medication/{medicationId}")
     fun getRemindersByMedication(@PathVariable medicationId: Long): ResponseEntity<List<Reminder>> {
         val reminders = reminderService.findRemindersByMedication(medicationId)
         return ResponseEntity.ok(reminders)
     }
 
-    // ✅ Atualizar lembrete
     @PutMapping("/{id}")
     fun updateReminder(
         @PathVariable id: Long,
@@ -54,7 +53,7 @@ class ReminderController(
         return ResponseEntity.ok(updated)
     }
 
-    // ✅ Deletar lembrete
+
     @DeleteMapping("/{id}")
     fun deleteReminder(@PathVariable id: Long): ResponseEntity<Void> {
         reminderService.deleteReminder(id)

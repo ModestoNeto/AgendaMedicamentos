@@ -1,9 +1,10 @@
-package com.br.ApiReme.Controller
+package com.br.ApiReme.controller
 
 
 
-import UserDomain
+
 import com.br.ApiReme.` Port`.entrada.UserPortE
+import com.br.ApiReme.domain.UserDomain
 import org.springframework.web.bind.annotation.*
 
 @RestController

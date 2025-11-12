@@ -1,6 +1,8 @@
 package com.br.ApiReme.` Port`.entrada
 
-import UserDomain
+import com.br.ApiReme.domain.UserDomain
+
+
 
 
 interface UserPortE{

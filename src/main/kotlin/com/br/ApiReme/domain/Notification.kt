@@ -1,3 +1,4 @@
+package com.br.ApiReme.domain
 import jakarta.persistence.*
 import java.time.LocalDateTime
 

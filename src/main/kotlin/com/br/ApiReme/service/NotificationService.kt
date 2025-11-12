@@ -1,8 +1,9 @@
 package com.br.ApiReme.service
 
-import Notification
+
 import com.br.ApiReme.` Port`.entrada.NotificatePortE
 import com.br.ApiReme.` Port`.saida.NotificationPortS
+import com.br.ApiReme.domain.Notification
 import org.springframework.stereotype.Service
 
 @Service
