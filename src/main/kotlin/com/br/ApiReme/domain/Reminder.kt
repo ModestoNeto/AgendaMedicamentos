@@ -17,7 +17,7 @@ data class Reminder(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    val user: UserDomain,
+    val user: UserDomain? = null,
 
 
     @Column(nullable = false)

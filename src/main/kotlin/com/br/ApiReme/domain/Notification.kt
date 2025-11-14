@@ -11,7 +11,7 @@ data class Notification(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reminder_id", nullable = false)
-    val reminder: Reminder,
+    val reminder: Reminder? = null,
 
     @Column(name = "sent_at")
     val sentAt: LocalDateTime? = null,

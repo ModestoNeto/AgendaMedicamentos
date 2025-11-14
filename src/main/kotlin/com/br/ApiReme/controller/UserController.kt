@@ -18,7 +18,7 @@ class UserController(
         userService.createUser(user)
 
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: Long): UserDomain? =
+    fun getUserById(@PathVariable id: Long): UserDomain? =''
         userService.findUserById(id)
 
     @GetMapping
