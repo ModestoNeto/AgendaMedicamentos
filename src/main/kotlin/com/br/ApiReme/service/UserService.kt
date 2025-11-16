@@ -3,32 +3,42 @@ package com.br.ApiReme.service
 import com.br.ApiReme.domain.UserDomain
 import com.br.ApiReme.` Port`.saida.UserPortS
 import com.br.ApiReme.` Port`.entrada.UserPortE
+import com.br.ApiReme.Dtos.Reponse.User.UserDtoResponse
+import com.br.ApiReme.Dtos.Request.User.UserDtoRequest
+import com.br.ApiReme.Dtos.Request.User.UserUpdateDtoRequest
+import com.br.ApiReme.Mapper.UserMapper
 import org.springframework.stereotype.Service
 
 @Service
 class UserService(
-    private val userRepository: UserPortS
+    private val userRepository: UserPortS,
+    private val usermapper: UserMapper
 ) : UserPortE {
 
-    override fun createUser(user: UserDomain): UserDomain =
-        userRepository.save(user)
+    override fun createUser(user: UserDtoRequest): UserDtoResponse {
+        val createUserEti = usermapper.toEntity(user)
+         return usermapper.toResponse(userRepository.save(createUserEti))
 
-    override fun findUserById(id: Long): UserDomain? =
-        userRepository.findById(id)
+    }
 
-    override fun findAllUsers(): List<UserDomain> =
-        userRepository.findAll()
+    override fun findUserById(id: Long): UserDtoResponse {
+       val fidUserEnti = userRepository.findById(id)
+           ?: throw IllegalArgumentException("User com ID $id não encontrado")
+        return usermapper.toResponse(fidUserEnti)
+    }
 
-    override fun updateUser(id: Long, updatedUser: UserDomain): UserDomain {
-        val existingUser = userRepository.findById(id)
+    override fun findAllUsers(): List<UserDtoResponse> {
+       return userRepository.findAll().stream().map { etiFind -> usermapper.toResponse(etiFind) }.toList()
+    }
+
+    override fun updateUser(id: Long, updatedUser: UserUpdateDtoRequest): UserDtoResponse {
+        var existingUser = userRepository.findById(id)
             ?: throw IllegalArgumentException("Usuário com ID $id não encontrado")
 
-        val newUser = existingUser.copy(
-            name = updatedUser.name,
-            email = updatedUser.email,
-            passwordHash = updatedUser.passwordHash
-        )
-        return userRepository.save(newUser)
+        existingUser.name=updatedUser.name!!
+        existingUser.email=updatedUser.email!!
+
+        return usermapper.toResponse(userRepository.save(existingUser))
     }
 
     override fun deleteUser(id: Long) {

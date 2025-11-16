@@ -13,22 +13,22 @@ data class Reminder(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medication_id", nullable = false)
-    val medication: Medication,
+    var medication: Medication?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    val user: UserDomain? = null,
+    var user: UserDomain? = null,
 
 
     @Column(nullable = false)
-    val datetime: LocalDateTime,
+    var datetime: LocalDateTime,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var status: ReminderStatus = ReminderStatus.PENDING,
+    var status: ReminderStatus,
 
     @OneToMany(mappedBy = "reminder", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val notifications: MutableList<Notification> = mutableListOf()
+    var notifications: MutableList<Notification> = mutableListOf()
 )
 
 enum class ReminderStatus {

@@ -10,15 +10,19 @@ data class Notification(
     val id: Long = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reminder_id", nullable = false)
-    val reminder: Reminder? = null,
+    @JoinColumn(name = "reminder_id", nullable = true)
+    var reminder: Reminder? = null,
 
     @Column(name = "sent_at")
-    val sentAt: LocalDateTime? = null,
+    var sentAt: LocalDateTime? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var status: NotificationStatus = NotificationStatus.PENDING
+    var status: NotificationStatus,
+
+    var messagem: String?
+
+
 )
 
 enum class NotificationStatus {

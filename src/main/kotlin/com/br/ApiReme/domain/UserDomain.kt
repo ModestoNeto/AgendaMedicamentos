@@ -10,18 +10,18 @@ data class UserDomain(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(nullable = false, unique = true)
-    val email: String,
+    var email: String,
 
     @Column(name = "password_hash", nullable = false)
-    val passwordHash: String,
+    var passwordHash: String,
 
 
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val medications: MutableList<Medication> = mutableListOf(),
+    var medications: MutableList<Medication> = mutableListOf(),
 
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val reminders: MutableList<Reminder> = mutableListOf()
+    var reminders: MutableList<Reminder> = mutableListOf()
 )

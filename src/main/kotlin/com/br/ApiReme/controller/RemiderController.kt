@@ -2,6 +2,9 @@ package com.br.ApiReme.controller
 
 
 import com.br.ApiReme.` Port`.entrada.ReminderPortE
+import com.br.ApiReme.Dtos.Reponse.Remider.ReminderDtoResponse
+import com.br.ApiReme.Dtos.Request.Remider.ReminderDtoRequest
+import com.br.ApiReme.Dtos.Request.Remider.ReminderUpdateDtoRequest
 import com.br.ApiReme.domain.Reminder
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,42 +18,38 @@ class ReminderController(
 
 
     @PostMapping
-    fun createReminder(@RequestBody reminder: Reminder): ResponseEntity<Reminder> {
+    fun createReminder(@RequestBody reminder: ReminderDtoRequest): ResponseEntity<ReminderDtoResponse> {
         val created = reminderService.createReminder(reminder)
         return ResponseEntity.status(HttpStatus.CREATED).body(created)
     }
 
 
     @GetMapping("/{id}")
-    fun getReminderById(@PathVariable id: Long): ResponseEntity<Reminder> {
+    fun getReminderById(@PathVariable id: Long): ResponseEntity<ReminderDtoResponse> {
         val reminder = reminderService.findReminderById(id)
-        return if (reminder != null)
-            ResponseEntity.ok(reminder)
-        else
-            ResponseEntity.notFound().build()
+
+            return ResponseEntity.status(HttpStatus.OK).body(reminder)
     }
 
 
     @GetMapping
-    fun getAllReminders(): ResponseEntity<List<Reminder>> {
+    fun getAllReminders(): ResponseEntity<List<ReminderDtoResponse>> {
         val reminders = reminderService.findAllReminders()
-        return ResponseEntity.ok(reminders)
+        return ResponseEntity.status(HttpStatus.OK).body(reminders)
     }
 
 
     @GetMapping("/medication/{medicationId}")
-    fun getRemindersByMedication(@PathVariable medicationId: Long): ResponseEntity<List<Reminder>> {
+    fun getRemindersByMedication(@PathVariable medicationId: Long): ResponseEntity<List<ReminderDtoResponse>> {
         val reminders = reminderService.findRemindersByMedication(medicationId)
-        return ResponseEntity.ok(reminders)
+        return ResponseEntity.status(HttpStatus.OK).body(reminders)
     }
 
     @PutMapping("/{id}")
     fun updateReminder(
-        @PathVariable id: Long,
-        @RequestBody updatedReminder: Reminder
-    ): ResponseEntity<Reminder> {
+        @PathVariable id: Long, @RequestBody updatedReminder: ReminderUpdateDtoRequest): ResponseEntity<ReminderDtoResponse> {
         val updated = reminderService.updateReminder(id, updatedReminder)
-        return ResponseEntity.ok(updated)
+        return ResponseEntity.status(HttpStatus.OK).body(updated)
     }
 
 
