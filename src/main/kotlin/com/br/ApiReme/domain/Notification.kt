@@ -18,7 +18,7 @@ data class Notification(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var status: NotificationStatus,
+    var status: NotificationStatus?,
 
     var messagem: String?
 

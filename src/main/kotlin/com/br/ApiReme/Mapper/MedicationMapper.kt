@@ -4,7 +4,10 @@ import com.br.ApiReme.Dtos.Reponse.Medication.MedicationDtoResponse
 import com.br.ApiReme.Dtos.Request.Medication.MedicationDtoRequest
 import com.br.ApiReme.domain.Medication
 import com.br.ApiReme.domain.UserDomain
+import org.springframework.stereotype.Component
 
+
+@Component
 object MedicationMapper {
 
     fun toEntity(dto: MedicationDtoRequest, user: UserDomain?): Medication =
@@ -17,10 +20,10 @@ object MedicationMapper {
 
     fun toResponse(entity: Medication): MedicationDtoResponse =
         MedicationDtoResponse(
-            id = entity.id,
-            name = entity.name,
-            dose = entity.dose,
-            frequency = entity.frequency,
+            id = entity.id!!,
+            name = entity.name!!,
+            dose = entity.dose!!,
+            frequency = entity.frequency!!,
             userId = entity.user?.id
         )
 }

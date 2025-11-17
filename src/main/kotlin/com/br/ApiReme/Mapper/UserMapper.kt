@@ -3,7 +3,9 @@ package com.br.ApiReme.Mapper
 import com.br.ApiReme.Dtos.Reponse.User.UserDtoResponse
 import com.br.ApiReme.Dtos.Request.User.UserDtoRequest
 import com.br.ApiReme.domain.UserDomain
+import org.springframework.stereotype.Component
 
+@Component
 object UserMapper {
     fun toEntity(dto: UserDtoRequest): UserDomain =
         UserDomain(

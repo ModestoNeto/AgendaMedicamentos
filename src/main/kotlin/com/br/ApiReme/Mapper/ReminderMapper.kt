@@ -6,7 +6,9 @@ import com.br.ApiReme.domain.Medication
 import com.br.ApiReme.domain.Reminder
 import com.br.ApiReme.domain.ReminderStatus
 import com.br.ApiReme.domain.UserDomain
+import org.springframework.stereotype.Component
 import java.time.LocalDateTime
+@Component
 object ReminderMapper {
     fun toEntity(
         dto: ReminderDtoRequest,
