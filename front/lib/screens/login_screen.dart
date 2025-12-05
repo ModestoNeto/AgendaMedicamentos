@@ -22,7 +22,6 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Ícone do medicamento
                     Container(
                       width: 100,
                       height: 100,
@@ -38,7 +37,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 32),
                     
-                    // Título
                     const Text(
                       'Bem-vindo ao MediCare',
                       style: TextStyle(
@@ -50,7 +48,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     
-                    // Subtítulo
                     const Text(
                       'Gerencie seus medicamentos e nunca mais esqueça de tomar suas doses',
                       style: TextStyle(
@@ -62,7 +59,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 48),
                     
-                    // Botão Entrar
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -89,7 +85,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     
-                    // Botão Cadastrar-se
                     SizedBox(
                       width: double.infinity,
                       height: 50,

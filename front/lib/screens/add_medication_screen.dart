@@ -55,7 +55,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Header
               Container(
                 color: const Color(0xFFF5F5F5),
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -76,12 +75,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 48), // Para centralizar o texto
+                    const SizedBox(width: 48),
                   ],
                 ),
               ),
               
-              // Formulário
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Form(
@@ -99,7 +97,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                       ),
                       const SizedBox(height: 32),
                       
-                      // Nome do medicamento
                       const Text(
                         'Nome do medicamento',
                         style: TextStyle(
@@ -134,7 +131,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                       ),
                       const SizedBox(height: 20),
                       
-                      // Dosagem
                       const Text(
                         'Dosagem',
                         style: TextStyle(
@@ -169,7 +165,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                       ),
                       const SizedBox(height: 20),
                       
-                      // Horário
                       const Text(
                         'Horário',
                         style: TextStyle(
@@ -207,14 +202,12 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                       ),
                       const SizedBox(height: 32),
                       
-                      // Botão Salvar
                       SizedBox(
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              // TODO: Salvar medicamento
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Medicamento adicionado com sucesso!'),

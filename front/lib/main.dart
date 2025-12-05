@@ -6,6 +6,7 @@ import 'screens/home_screen.dart';
 import 'screens/current_medications_screen.dart';
 import 'screens/add_medication_screen.dart';
 import 'screens/medication_reminder_screen.dart';
+import 'screens/medication_history_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
           medicationName: 'Paracetamol',
           time: '12:00',
         ),
+        '/medication-history': (context) => const MedicationHistoryScreen(),
       },
     );
   }

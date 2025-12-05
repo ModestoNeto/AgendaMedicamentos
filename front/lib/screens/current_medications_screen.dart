@@ -163,7 +163,6 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -186,7 +185,6 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
               ),
             ),
             
-            // Título e subtítulo
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
@@ -213,7 +211,6 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
             ),
             const SizedBox(height: 24),
             
-            // Lista de medicamentos
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -263,7 +260,6 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
             ),
             const SizedBox(height: 16),
             
-            // Botão adicionar
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: SizedBox(
@@ -321,20 +317,23 @@ class _MedicationCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[200]!),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
                   children: [
-                    Text(
-                      medication.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                    Flexible(
+                      child: Text(
+                        medication.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
                     if (medication.isTaken) ...[
@@ -357,81 +356,81 @@ class _MedicationCard extends StatelessWidget {
                     ],
                   ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Dosagem: ${medication.dosage}',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
-                    const SizedBox(width: 4),
-                    Text(
-                      medication.time,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
+              IconButton(
+                onPressed: onDelete,
+                icon: const Icon(Icons.delete_outline, color: Colors.red, size: 22),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          
+          Text(
+            'Dosagem: ${medication.dosage}',
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey[600],
             ),
           ),
-          const SizedBox(width: 12),
-          Column(
+          const SizedBox(height: 4),
+          
+          Row(
             children: [
-              SizedBox(
-                width: 90,
+              Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
+              const SizedBox(width: 4),
+              Text(
+                medication.time,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          
+          Row(
+            children: [
+              Expanded(
                 child: ElevatedButton(
                   onPressed: onToggle,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: medication.isTaken ? Colors.grey[400] : Colors.black,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   child: Text(
                     medication.isTaken ? 'Tomado' : 'Marcar',
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
               if (!medication.isTaken) ...[
-                const SizedBox(height: 6),
-                SizedBox(
-                  width: 90,
+                const SizedBox(width: 8),
+                Expanded(
                   child: OutlinedButton(
                     onPressed: onPostpone,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.black87,
-                      side: const BorderSide(color: Colors.black12),
+                      side: const BorderSide(color: Colors.black26),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     child: const Text(
                       'Adiar',
-                      style: TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
               ],
             ],
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            onPressed: onDelete,
-            icon: const Icon(Icons.delete_outline, color: Colors.red),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
           ),
         ],
       ),
