@@ -29,7 +29,6 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                // Header com botão voltar
                 Row(
                   children: [
                     IconButton(
@@ -50,7 +49,6 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                 ),
                 const SizedBox(height: 32),
                 
-                // Card com formulário
                 Card(
                   elevation: 8,
                   shape: RoundedRectangleBorder(
@@ -74,7 +72,6 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           ),
                           const SizedBox(height: 32),
                           
-                          // E-mail
                           const Text(
                             'E-mail',
                             style: TextStyle(
@@ -113,7 +110,6 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           ),
                           const SizedBox(height: 20),
                           
-                          // Senha
                           const Text(
                             'Senha',
                             style: TextStyle(
@@ -149,15 +145,12 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           ),
                           const SizedBox(height: 32),
                           
-                          // Botão Entrar
                           SizedBox(
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  // TODO: Implementar lógica de login
-                                  // Por enquanto, navega para a home
                                   Navigator.pushReplacementNamed(context, '/home');
                                 }
                               },

@@ -28,7 +28,6 @@ class MedicationReminderScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Ícone de sino
                   Container(
                     width: 100,
                     height: 100,
@@ -44,7 +43,6 @@ class MedicationReminderScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
                   
-                  // Título
                   const Text(
                     'Hora do Medicamento!',
                     style: TextStyle(
@@ -56,7 +54,6 @@ class MedicationReminderScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   
-                  // Mensagem
                   const Text(
                     'É hora de tomar:',
                     style: TextStyle(
@@ -67,7 +64,6 @@ class MedicationReminderScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   
-                  // Nome do medicamento
                   Text(
                     medicationName,
                     style: const TextStyle(
@@ -79,7 +75,6 @@ class MedicationReminderScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   
-                  // Horário
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -96,7 +91,6 @@ class MedicationReminderScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
                   
-                  // Botão Tomei o medicamento
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -128,13 +122,11 @@ class MedicationReminderScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   
-                  // Botão Adiar lembrete
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: OutlinedButton(
                       onPressed: () {
-                        // TODO: Mostrar opções de adiamento
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Lembrete adiado'),

@@ -13,7 +13,6 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                // Ícone do medicamento
                 Container(
                   width: 120,
                   height: 120,
@@ -29,7 +28,6 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 
-                // Saudação
                 const Text(
                   'Olá, Usuário!',
                   style: TextStyle(
@@ -40,7 +38,6 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 
-                // Subtítulo
                 const Text(
                   'Gerencie seus medicamentos de forma simples e eficaz',
                   style: TextStyle(
@@ -52,7 +49,6 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
                 
-                // Card Medicamentos Atuais
                 Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -67,7 +63,6 @@ class HomeScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(24.0),
                       child: Row(
                         children: [
-                          // Ícone do relógio
                           Container(
                             width: 60,
                             height: 60,
@@ -83,7 +78,6 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 20),
                           
-                          // Textos
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +109,6 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 
-                // Card Histórico de Medicamentos
                 Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -123,19 +116,13 @@ class HomeScreen extends StatelessWidget {
                   ),
                   child: InkWell(
                     onTap: () {
-                      // TODO: Navegar para tela de histórico
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Navegando para Histórico de Medicamentos'),
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/medication-history');
                     },
                     borderRadius: BorderRadius.circular(16),
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Row(
                         children: [
-                          // Ícone do histórico
                           Container(
                             width: 60,
                             height: 60,
@@ -151,7 +138,6 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 20),
                           
-                          // Textos
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

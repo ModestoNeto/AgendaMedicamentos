@@ -33,7 +33,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                // Header com botão voltar
                 Row(
                   children: [
                     IconButton(
@@ -54,7 +53,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 32),
                 
-                // Card com formulário
                 Card(
                   elevation: 8,
                   shape: RoundedRectangleBorder(
@@ -78,7 +76,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           const SizedBox(height: 32),
                           
-                          // Nome completo
                           const Text(
                             'Nome completo',
                             style: TextStyle(
@@ -113,7 +110,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           const SizedBox(height: 20),
                           
-                          // E-mail
                           const Text(
                             'E-mail',
                             style: TextStyle(
@@ -152,7 +148,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           const SizedBox(height: 20),
                           
-                          // Senha
                           const Text(
                             'Senha',
                             style: TextStyle(
@@ -191,7 +186,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           const SizedBox(height: 20),
                           
-                          // Confirmar senha
                           const Text(
                             'Confirmar senha',
                             style: TextStyle(
@@ -230,14 +224,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           const SizedBox(height: 32),
                           
-                          // Botão Criar conta
                           SizedBox(
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  // TODO: Implementar lógica de cadastro
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Cadastro realizado com sucesso!'),
