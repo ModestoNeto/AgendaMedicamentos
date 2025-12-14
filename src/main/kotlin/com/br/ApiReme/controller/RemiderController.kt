@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -27,6 +28,7 @@ class ReminderController(
         ApiResponse(responseCode = "201", description = "Lembrete criado com sucesso"),
         ApiResponse(responseCode = "400", description = "Dados inválidos")
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     fun createReminder(@RequestBody reminder: ReminderDtoRequest): ResponseEntity<ReminderDtoResponse> {
         val created = reminderService.createReminder(reminder)
@@ -41,6 +43,7 @@ class ReminderController(
         ApiResponse(responseCode = "200", description = "Lembrete encontrado"),
         ApiResponse(responseCode = "404", description = "Lembrete não encontrado")
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     fun getReminderById(@PathVariable id: Long): ResponseEntity<ReminderDtoResponse> {
         val reminder = reminderService.findReminderById(id)
@@ -52,6 +55,7 @@ class ReminderController(
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     fun getAllReminders(): ResponseEntity<List<ReminderDtoResponse>> {
         val reminders = reminderService.findAllReminders()
@@ -67,6 +71,7 @@ class ReminderController(
         ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
         ApiResponse(responseCode = "404", description = "Medicação não encontrada")
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/medication/{medicationId}")
     fun getRemindersByMedication(@PathVariable medicationId: Long): ResponseEntity<List<ReminderDtoResponse>> {
         val reminders = reminderService.findRemindersByMedication(medicationId)
@@ -78,6 +83,7 @@ class ReminderController(
         ApiResponse(responseCode = "200", description = "Lembrete atualizado com sucesso"),
         ApiResponse(responseCode = "404", description = "Lembrete não encontrado")
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     fun updateReminder(
         @PathVariable id: Long, @RequestBody updatedReminder: ReminderUpdateDtoRequest): ResponseEntity<ReminderDtoResponse> {
@@ -90,6 +96,7 @@ class ReminderController(
         ApiResponse(responseCode = "204", description = "Lembrete excluído com sucesso"),
         ApiResponse(responseCode = "404", description = "Lembrete não encontrado")
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     fun deleteReminder(@PathVariable id: Long): ResponseEntity<Void> {
         reminderService.deleteReminder(id)
