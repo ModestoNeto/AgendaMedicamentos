@@ -6,11 +6,10 @@ import com.br.ApiReme.domain.Medication
 import com.br.ApiReme.domain.UserDomain
 import org.springframework.stereotype.Component
 
-
 @Component
 object MedicationMapper {
 
-    fun toEntity(dto: MedicationDtoRequest, user: UserDomain?): Medication =
+    fun toEntity(dto: MedicationDtoRequest, user: UserDomain): Medication =
         Medication(
             user = user,
             name = dto.name,
@@ -24,6 +23,6 @@ object MedicationMapper {
             name = entity.name!!,
             dose = entity.dose!!,
             frequency = entity.frequency!!,
-            userId = entity.user?.id
+            userId = entity.user!!.id
         )
 }

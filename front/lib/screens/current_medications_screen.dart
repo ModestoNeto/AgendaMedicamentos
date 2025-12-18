@@ -26,6 +26,23 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
     _loader = _load();
   }
 
+  int? _asInt(dynamic v) {
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
+    return null;
+  }
+
+  int? _extractUserId(Map<String, dynamic> m) {
+    final v = m['userId'] ?? m['user_id'] ?? m['user']?['id'];
+    return _asInt(v);
+  }
+
+  int? _extractMedicationId(Map<String, dynamic> r) {
+    final v = r['medicationId'] ?? r['medication_id'] ?? r['medication']?['id'];
+    return _asInt(v);
+  }
+
   Future<void> _load() async {
     final userId = AppSession.userId;
     if (userId == null) {
@@ -34,20 +51,15 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
       return;
     }
 
-    final meds = await _medService.listMedications(); // List<Map<String,dynamic>>
+    final meds = await _medService.listMedications();
     final reminders = await _remService.listReminders();
 
-    // filtra por user se existir userId no payload
-    _meds = meds.where((m) => m['userId'] == userId || m['user']?['id'] == userId).toList();
-    _reminders =
-        reminders.where((r) => r['userId'] == userId || r['user']?['id'] == userId).toList();
+    _meds = meds.where((m) => _extractUserId(m) == userId).toList();
+    _reminders = reminders.where((r) => _extractUserId(r) == userId).toList();
   }
 
   Map<String, dynamic>? _nextReminderForMed(int medId) {
-    final list = _reminders
-        .where((r) => r['medicationId'] == medId || r['medication']?['id'] == medId)
-        .toList();
-
+    final list = _reminders.where((r) => _extractMedicationId(r) == medId).toList();
     if (list.isEmpty) return null;
 
     list.sort((a, b) {
@@ -60,8 +72,8 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
   }
 
   Future<void> _openReminder(Map<String, dynamic> med) async {
-    final medId = med['id'];
-    if (medId is! int) return;
+    final medId = _asInt(med['id']);
+    if (medId == null) return;
 
     final reminder = _nextReminderForMed(medId);
     if (reminder == null) {
@@ -71,10 +83,10 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
       return;
     }
 
-    final reminderId = reminder['id'];
+    final reminderId = _asInt(reminder['id']);
     final dt = DateTime.tryParse(reminder['datetime']?.toString() ?? '');
 
-    if (reminderId is! int || dt == null) return;
+    if (reminderId == null || dt == null) return;
 
     final changed = await Navigator.push<bool>(
       context,
@@ -104,10 +116,25 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
     }
   }
 
+  Future<void> _goAddMedication() async {
+    final changed = await Navigator.pushNamed(context, '/add-medication');
+    if (changed == true) {
+      setState(() => _loader = _load());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Medicamentos Atuais')),
+      appBar: AppBar(
+        title: const Text('Medicamentos Atuais'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _goAddMedication,
+          ),
+        ],
+      ),
       body: FutureBuilder<void>(
         future: _loader,
         builder: (context, snap) {
@@ -137,7 +164,7 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, i) {
                 final med = _meds[i];
-                final medId = med['id'] as int?;
+                final medId = _asInt(med['id']);
                 final next = medId == null ? null : _nextReminderForMed(medId);
 
                 final dt = next == null ? null : DateTime.tryParse(next['datetime']?.toString() ?? '');
@@ -164,6 +191,10 @@ class _CurrentMedicationsScreenState extends State<CurrentMedicationsScreen> {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _goAddMedication,
+        child: const Icon(Icons.add),
       ),
     );
   }

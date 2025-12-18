@@ -24,6 +24,13 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
     super.dispose();
   }
 
+  int? _asInt(dynamic v) {
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
+    return null;
+  }
+
   Future<void> _login() async {
     final ok = _formKey.currentState?.validate() ?? false;
     if (!ok) return;
@@ -34,23 +41,31 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
       final users = await _userService.listUsers();
       final email = _emailController.text.trim().toLowerCase();
 
-      final found = users.where((u) => (u['email']?.toString().toLowerCase() == email)).toList();
+      final found =
+          users.where((u) => (u['email']?.toString().toLowerCase() == email)).toList();
+
       if (found.isEmpty) {
         throw Exception('Usuário não encontrado. Cadastre-se.');
       }
 
-      // Sem auth real, salva só o básico
       final user = found.first;
-      final id = user['id'];
-      if (id is int) AppSession.userId = id;
+
+      final id = _asInt(user['id']);
+      if (id == null) {
+        throw Exception('API não retornou id do usuário.');
+      }
+
+      AppSession.userId = id;
       AppSession.userName = user['name']?.toString();
       AppSession.userEmail = user['email']?.toString();
 
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro no login: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro no login: $e')),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -77,12 +92,15 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Entrar',
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        const Text(
+                          'Entrar',
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 24),
-
-                        const Text('E-mail',
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                        const Text(
+                          'E-mail',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _emailController,
@@ -98,9 +116,10 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
-
-                        const Text('Senha',
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                        const Text(
+                          'Senha',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _passwordController,
@@ -116,7 +135,6 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                           },
                         ),
                         const SizedBox(height: 24),
-
                         SizedBox(
                           width: double.infinity,
                           height: 50,
@@ -125,23 +143,34 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               elevation: 0,
                             ),
                             child: _isLoading
                                 ? const SizedBox(
                                     width: 22,
                                     height: 22,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
                                   )
-                                : const Text('Entrar',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                                : const Text(
+                                    'Entrar',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                           ),
                         ),
-
                         const SizedBox(height: 16),
                         TextButton(
-                          onPressed: _isLoading ? null : () => Navigator.pushNamed(context, '/register'),
+                          onPressed: _isLoading
+                              ? null
+                              : () => Navigator.pushNamed(context, '/register'),
                           child: const Text('Não tem conta? Cadastre-se'),
                         ),
                       ],

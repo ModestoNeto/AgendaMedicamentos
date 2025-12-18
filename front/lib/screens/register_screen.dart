@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_session.dart';
 import '../services/user_service.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -28,6 +29,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  int? _asInt(dynamic v) {
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
+    return null;
+  }
+
   Future<void> _submit() async {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
@@ -35,11 +43,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
 
     try {
+      final name = _nameController.text.trim();
+      final email = _emailController.text.trim().toLowerCase();
+
       await _userService.createUser(
-        name: _nameController.text.trim(),
-        email: _emailController.text.trim(),
+        name: name,
+        email: email,
         password: _passwordController.text,
       );
+
+      final users = await _userService.listUsers();
+      final found =
+          users.where((u) => (u['email']?.toString().toLowerCase() == email)).toList();
+
+      if (found.isEmpty) {
+        throw Exception('Cadastro feito, mas não foi possível carregar o usuário.');
+      }
+
+      final user = found.first;
+      final id = _asInt(user['id']);
+      if (id == null) {
+        throw Exception('API não retornou id do usuário.');
+      }
+
+      AppSession.userId = id;
+      AppSession.userName = user['name']?.toString() ?? name;
+      AppSession.userEmail = user['email']?.toString() ?? email;
 
       if (!mounted) return;
 
@@ -47,10 +76,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         const SnackBar(content: Text('Cadastro realizado com sucesso!')),
       );
 
-      Navigator.pop(context);
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
     } catch (e) {
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao cadastrar: $e')),
       );
@@ -80,19 +108,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(width: 16),
                     const Text(
                       'Voltar',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
                 const SizedBox(height: 32),
                 Card(
                   elevation: 8,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 500),
                     padding: const EdgeInsets.all(40.0),
@@ -112,7 +135,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             const SizedBox(height: 32),
-
                             const Text(
                               'Nome completo',
                               style: TextStyle(
@@ -125,20 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             TextFormField(
                               controller: _nameController,
                               textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(
-                                hintText: 'Seu nome',
-                                hintStyle: TextStyle(color: Colors.grey[400]),
-                                filled: true,
-                                fillColor: const Color(0xFFF5F5F5),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                              ),
+                              decoration: _inputDecoration('Seu nome'),
                               validator: (value) {
                                 final v = value?.trim() ?? '';
                                 if (v.isEmpty) return 'Por favor, insira seu nome';
@@ -147,7 +156,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               },
                             ),
                             const SizedBox(height: 20),
-
                             const Text(
                               'E-mail',
                               style: TextStyle(
@@ -161,20 +169,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               controller: _emailController,
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(
-                                hintText: 'seu@email.com',
-                                hintStyle: TextStyle(color: Colors.grey[400]),
-                                filled: true,
-                                fillColor: const Color(0xFFF5F5F5),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                              ),
+                              decoration: _inputDecoration('seu@email.com'),
                               validator: (value) {
                                 final v = value?.trim() ?? '';
                                 if (v.isEmpty) return 'Por favor, insira seu e-mail';
@@ -184,7 +179,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               },
                             ),
                             const SizedBox(height: 20),
-
                             const Text(
                               'Senha',
                               style: TextStyle(
@@ -198,31 +192,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               controller: _passwordController,
                               obscureText: true,
                               textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(
-                                hintText: '••••••••',
-                                hintStyle: TextStyle(color: Colors.grey[400]),
-                                filled: true,
-                                fillColor: const Color(0xFFF5F5F5),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                              ),
+                              decoration: _inputDecoration('••••••••'),
                               validator: (value) {
                                 final v = value ?? '';
                                 if (v.isEmpty) return 'Por favor, insira sua senha';
-                                if (v.length < 6) {
-                                  return 'A senha deve ter pelo menos 6 caracteres';
-                                }
+                                if (v.length < 6) return 'Mínimo 6 caracteres';
                                 return null;
                               },
                             ),
                             const SizedBox(height: 20),
-
                             const Text(
                               'Confirmar senha',
                               style: TextStyle(
@@ -237,20 +215,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               obscureText: true,
                               textInputAction: TextInputAction.done,
                               onFieldSubmitted: (_) => _submit(),
-                              decoration: InputDecoration(
-                                hintText: '••••••••',
-                                hintStyle: TextStyle(color: Colors.grey[400]),
-                                filled: true,
-                                fillColor: const Color(0xFFF5F5F5),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                              ),
+                              decoration: _inputDecoration('••••••••'),
                               validator: (value) {
                                 final v = value ?? '';
                                 if (v.isEmpty) return 'Por favor, confirme sua senha';
@@ -261,7 +226,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               },
                             ),
                             const SizedBox(height: 32),
-
                             SizedBox(
                               width: double.infinity,
                               height: 50,
@@ -306,4 +270,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+
+  InputDecoration _inputDecoration(String hint) => InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey[400]),
+        filled: true,
+        fillColor: const Color(0xFFF5F5F5),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      );
 }

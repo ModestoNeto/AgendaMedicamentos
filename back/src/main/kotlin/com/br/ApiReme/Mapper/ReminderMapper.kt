@@ -8,27 +8,30 @@ import com.br.ApiReme.domain.ReminderStatus
 import com.br.ApiReme.domain.UserDomain
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
+
 @Component
 object ReminderMapper {
+
     fun toEntity(
         dto: ReminderDtoRequest,
-        medication: Medication?,
-        user: UserDomain?
-    ): Reminder =
-        Reminder(
+        medication: Medication,
+        user: UserDomain
+    ): Reminder {
+        return Reminder(
             medication = medication,
             datetime = LocalDateTime.parse(dto.datetime),
-            status = enumValueOf<ReminderStatus>(dto.status.uppercase()),
+            status = ReminderStatus.valueOf(dto.status.uppercase()),
             user = user
         )
+    }
 
-
-    fun toResponse(entity: Reminder): ReminderDtoResponse =
-        ReminderDtoResponse(
+    fun toResponse(entity: Reminder): ReminderDtoResponse {
+        return ReminderDtoResponse(
             id = entity.id,
             medicationId = entity.medication!!.id,
-            userId = entity.user?.id,
+            userId = entity.user!!.id,
             datetime = entity.datetime.toString(),
             status = entity.status.name
         )
+    }
 }

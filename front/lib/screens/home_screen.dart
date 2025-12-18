@@ -7,6 +7,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final name = AppSession.userName ?? 'Usuário';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Agenda de Medicamentos'),
@@ -15,7 +16,7 @@ class HomeScreen extends StatelessWidget {
             tooltip: 'Sair',
             onPressed: () {
               AppSession.clear();
-              Navigator.pushReplacementNamed(context, '/login');
+              Navigator.pushNamedAndRemoveUntil(context, '/', (_) => false);
             },
             icon: const Icon(Icons.logout),
           ),
@@ -27,24 +28,34 @@ class HomeScreen extends StatelessWidget {
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: Text('Olá, $name',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+              child: Text(
+                'Olá, $name',
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              ),
             ),
             const SizedBox(height: 16),
+
             ListTile(
               leading: const Icon(Icons.medication),
               title: const Text('Medicamentos atuais'),
               onTap: () => Navigator.pushNamed(context, '/current-medications'),
             ),
+
             ListTile(
               leading: const Icon(Icons.add),
               title: const Text('Adicionar medicamento'),
-              onTap: () => Navigator.pushNamed(context, '/add-medication'),
+              onTap: () async {
+                final changed = await Navigator.pushNamed(context, '/add-medication');
+                if (changed == true && context.mounted) {
+                  Navigator.pushNamed(context, '/current-medications');
+                }
+              },
             ),
+
             ListTile(
               leading: const Icon(Icons.history),
               title: const Text('Histórico'),
-              onTap: () => Navigator.pushNamed(context, '/history'),
+              onTap: () => Navigator.pushNamed(context, '/medication-history'),
             ),
           ],
         ),

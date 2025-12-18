@@ -30,6 +30,13 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     super.dispose();
   }
 
+  int? _asInt(dynamic v) {
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    if (v is String) return int.tryParse(v);
+    return null;
+  }
+
   Future<void> _pickTime() async {
     final picked = await showTimePicker(
       context: context,
@@ -67,8 +74,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
         frequency: _frequencyController.text.trim(),
       );
 
-      final medIdRaw = medication['id'];
-      if (medIdRaw is! int) {
+      final medId = _asInt(medication['id']);
+      if (medId == null) {
         throw Exception('API não retornou id do medicamento.');
       }
 
@@ -77,7 +84,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       final iso = dt.toIso8601String();
 
       await _remService.createReminder(
-        medicationId: medIdRaw,
+        medicationId: medId,
         userId: userId,
         datetimeIso: iso,
       );
@@ -86,12 +93,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Medicamento cadastrado!')),
       );
+
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro: $e')));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -126,7 +132,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                 TextFormField(
                   controller: _frequencyController,
                   decoration: const InputDecoration(labelText: 'Frequência (ex: 1x ao dia)'),
-                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Informe a frequência' : null,
+                  validator: (v) =>
+                      (v == null || v.trim().isEmpty) ? 'Informe a frequência' : null,
                 ),
                 const SizedBox(height: 12),
                 ListTile(
@@ -149,7 +156,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                           )
                         : const Text('Salvar'),
                   ),
-                )
+                ),
               ],
             ),
           ),
