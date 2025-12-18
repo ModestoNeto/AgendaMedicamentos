@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../app_session.dart';
+import '../services/medication_service.dart';
+import '../services/reminder_service.dart';
 
 class AddMedicationScreen extends StatefulWidget {
   const AddMedicationScreen({super.key});
@@ -10,234 +13,145 @@ class AddMedicationScreen extends StatefulWidget {
 class _AddMedicationScreenState extends State<AddMedicationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _dosageController = TextEditingController();
-  final _timeController = TextEditingController();
+  final _doseController = TextEditingController();
+  final _frequencyController = TextEditingController(text: '1x ao dia');
+
+  TimeOfDay? _time;
+  bool _isLoading = false;
+
+  final _medService = MedicationService();
+  final _remService = ReminderService();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _dosageController.dispose();
-    _timeController.dispose();
+    _doseController.dispose();
+    _frequencyController.dispose();
     super.dispose();
   }
 
-  Future<void> _selectTime() async {
-    final TimeOfDay? picked = await showTimePicker(
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.black,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      initialTime: _time ?? TimeOfDay.now(),
     );
-    
-    if (picked != null) {
-      setState(() {
-        _timeController.text = picked.format(context);
-      });
+    if (picked != null) setState(() => _time = picked);
+  }
+
+  Future<void> _save() async {
+    final ok = _formKey.currentState?.validate() ?? false;
+    if (!ok) return;
+
+    final userId = AppSession.userId;
+    if (userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Faça login/cadastro antes.')),
+      );
+      return;
+    }
+
+    if (_time == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione um horário.')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final medication = await _medService.createMedication(
+        userId: userId,
+        name: _nameController.text.trim(),
+        dose: _doseController.text.trim(),
+        frequency: _frequencyController.text.trim(),
+      );
+
+      final medIdRaw = medication['id'];
+      if (medIdRaw is! int) {
+        throw Exception('API não retornou id do medicamento.');
+      }
+
+      final now = DateTime.now();
+      final dt = DateTime(now.year, now.month, now.day, _time!.hour, _time!.minute);
+      final iso = dt.toIso8601String();
+
+      await _remService.createReminder(
+        medicationId: medIdRaw,
+        userId: userId,
+        datetimeIso: iso,
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Medicamento cadastrado!')),
+      );
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final timeLabel = _time == null ? 'Selecionar horário' : _time!.format(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                color: const Color(0xFFF5F5F5),
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back),
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Voltar',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 48),
-                  ],
+      appBar: AppBar(title: const Text('Adicionar Medicamento')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: AbsorbPointer(
+            absorbing: _isLoading,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Nome do medicamento'),
+                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Informe o nome' : null,
                 ),
-              ),
-              
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Adicionar Novo Medicamento',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      
-                      const Text(
-                        'Nome do medicamento',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          hintText: 'Ex: Paracetamol',
-                          hintStyle: TextStyle(color: Colors.grey[400]),
-                          filled: true,
-                          fillColor: const Color(0xFFF5F5F5),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, insira o nome do medicamento';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      
-                      const Text(
-                        'Dosagem',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _dosageController,
-                        decoration: InputDecoration(
-                          hintText: 'Ex: 500mg',
-                          hintStyle: TextStyle(color: Colors.grey[400]),
-                          filled: true,
-                          fillColor: const Color(0xFFF5F5F5),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, insira a dosagem';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      
-                      const Text(
-                        'Horário',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _timeController,
-                        readOnly: true,
-                        onTap: _selectTime,
-                        decoration: InputDecoration(
-                          hintText: '--:--',
-                          hintStyle: TextStyle(color: Colors.grey[400]),
-                          filled: true,
-                          fillColor: const Color(0xFFF5F5F5),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                          suffixIcon: const Icon(Icons.access_time),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Por favor, selecione o horário';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 32),
-                      
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Medicamento adicionado com sucesso!'),
-                                ),
-                              );
-                              Navigator.pop(context);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 0,
-                          ),
-                          child: const Text(
-                            'Salvar Medicamento',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _doseController,
+                  decoration: const InputDecoration(labelText: 'Dosagem (ex: 1 comprimido)'),
+                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Informe a dosagem' : null,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _frequencyController,
+                  decoration: const InputDecoration(labelText: 'Frequência (ex: 1x ao dia)'),
+                  validator: (v) => (v == null || v.trim().isEmpty) ? 'Informe a frequência' : null,
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.access_time),
+                  title: Text(timeLabel),
+                  onTap: _pickTime,
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _save,
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Salvar'),
                   ),
-                ),
-              ),
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
